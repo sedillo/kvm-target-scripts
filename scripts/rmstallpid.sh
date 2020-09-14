@@ -1,12 +1,19 @@
 #!/bin/sh
+
+#Check for existing pid file
+#Exit if it doesn't exist
 pidfile="/tmp/qemu_${1}.pid"
 if [ ! -f "$pidfile" ]; then
-	echo "PID file $pidfile does not exist"
+	#echo "PID file $pidfile does not exist"
 	exit 0;
 fi
+
+#If PID file exists
 pid=`cat $pidfile`
 echo "PID is $pid"
 pcmdl="/proc/${pid}/cmdline"
+
+#check for running process
 if [ -f "$pcmdl" ]; then
 	isqemu=`grep qemu-system-x86_64 ${pcmdl}`
 	if [ -z "$isqemu" ]; then

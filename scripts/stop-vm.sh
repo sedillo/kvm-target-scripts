@@ -14,9 +14,10 @@ else
 fi
 
 # check current dir
-#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-# echo "Current script location: "$DIR
-# check if it has argument passed
+CFG=${1}
+NOSFX=${CFG%.sh}
+VMNAME=${NOSFX##*/}
+
 if [ $# -eq 0 ]
 then
         echo "No argument supplied, please pass the name of the vmname specified by cfg/vmname.sh"
@@ -24,8 +25,6 @@ then
 fi
 
 # check if configuration exist
-CFG="$DIR/cfg/${1}.sh"
-#echo "VM configuration path is $CFG"
 if [[ -x "$CFG" ]]
 then
         source $CFG
@@ -34,7 +33,14 @@ else
         exit 1
 fi
 
-if [ ! -z "$MONITOR" ]
-then
-	echo 'system_powerdown' |  nc localhost $MONITOR	
-fi	
+#This didn't work for me
+#if [ ! -z "$MONITOR" ]
+#then
+	#echo 'system_powerdown' |  nc localhost $MONITOR	
+#fi	
+PIDFILE=/tmp/qemu_${VMNAME}.pid
+if [ ! -z "$PIDFILE" ]; then
+	kill -9 `cat $PIDFILE`
+fi
+
+

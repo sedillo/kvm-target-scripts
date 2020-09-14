@@ -13,9 +13,6 @@ else
         exit 1
 fi
 
-# check current dir
-#DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-# echo "Current script location: "$DIR
 # check if it has argument passed
 if [ $# -eq 0 ]
 then
@@ -24,8 +21,10 @@ then
 fi
 
 # check if configuration exist
-CFG="$DIR/cfg/${1}.sh"
-#echo "VM configuration path is $CFG"
+CFG=${1}
+NOSFX=${CFG%.sh}
+VMNAME=${NOSFX##*/}
+
 if [[ -x "$CFG" ]]
 then
         source $CFG
@@ -34,7 +33,8 @@ else
         exit 1
 fi
 
-/var/vm/scripts/rmstalpid.sh ${1}
+echo $DIR
+$DIR/scripts/rmstalepid.sh ${VMNAME}
 
 QEMU="/usr/bin/qemu-system-x86_64 -enable-kvm "
 DEF_MEMORY=2048
@@ -154,7 +154,7 @@ then
 fi
 # Daemonize and store PID at /tmp/qemu_filename.pid
 
-QEMU_SCRIPT+=" -daemonize -pidfile /tmp/qemu_${1}.pid "
+QEMU_SCRIPT+=" -daemonize -pidfile /tmp/qemu_${VMNAME}.pid "
 #echo "Script: "$QEMU_SCRIPT
 #Run qemu
 $QEMU_SCRIPT
