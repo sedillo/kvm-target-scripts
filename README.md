@@ -1,3 +1,3 @@
 # kvm-automation
 
-Scripts, configuration and documentation on the flow of preparing system with KVM+GVTg
+* [Base component preparation](./docs/setup-svc.md)
