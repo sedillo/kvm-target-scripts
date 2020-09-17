@@ -1,12 +1,12 @@
 #!/bin/sh
 NAME="Ubuntu-Guest"
-VGPU="f50aab10-7cc8-11e9-a94b-6b9d8245bfc2"
+VGPU=${VGPU1}
 MAC="00:DE:AD:BE:EF:F1"
 MACHINE="q35"
-HDD=/var/vm/disk/ubuntu.qcow2
-#ISO=/var/vm/iso/ubuntu.iso
-BIOS=/var/vm/fw/OVMF.fd
-#IFUP=/var/vm/script/qemu-ifup-bridge
+HDD=$DIR/disk/ubuntu.qcow2
+ISO=$DIR/iso/ubuntu-20.04.1-desktop-amd64.iso
+BIOS=$DIR/fw/OVMF.fd
+#IFUP=$DIR/script/qemu-ifup-bridge
 DISPLAY="on"
 VGA="none"
 #SERIAL="stdio"
