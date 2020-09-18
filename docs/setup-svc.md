@@ -41,15 +41,15 @@ sudo systemctl start vgpu.service
 
 ## QEMU service
 
-### To QEMU VM (manually)
+### To start QEMU VM (manually)
 
 QEMU service is responsible for starting and stopping VM. It depends on two exectable scripts:
 * /var/vm/scripts/start-vm.sh
 * /var/vm/scripts/stop-vm.sh
 
-Both scripts require one argument. This argument will be one file stored at /var/vm/cfg/${name}.sh.
+Both scripts require one argument. This argument will be one file stored at /var/vm/cfg/${name}.sh. (See examples below)
 
-### To QEMU VM (automatically) using systemd
+### To start QEMU VM (automatically) using systemd
 
 
 In order to use those scripts and configuration to manage VM in an automated fashion, the following qemu@.service file should be defined to dynamically run the VM based on the configuration.
@@ -66,3 +66,47 @@ Let say we want to enable and to start Ubuntu VM automatically. Here is the step
 $ sudo systemctl enable qemu@ubuntu.service
 $ sudo systemctl start qemu@ubuntu.service
 ```
+
+### Example CIV 
+```
+#Create CIV folder
+mkdir /var/vm/civ
+cd /var/vm/civ
+
+#Download precompiled binaries
+wget https://github.com/projectceladon/celadon-binary/raw/master/CIV_00.20.02.24_A10/caas-ota-QMm000000.zip
+wget https://github.com/projectceladon/celadon-binary/raw/master/CIV_00.20.02.24_A10/caas-releasefiles-userdebug.tar.gz
+
+#Script setup
+chmod +x scripts/*.sh
+mkdir sof_audio
+mv -t sof_audio $CIV_WORK_DIR/scripts/sof_audio/configure_sof.sh $CIV_WORK_DIR/scripts/sof_audio/blacklist-dsp.conf
+chmod +x scripts/guest_pm_control
+chmod +x scripts/findall.py
+chmod +x scripts/thermsys
+chmod +x scripts/batsys
+
+#Audio setup
+./sof_audio/configure_sof.sh "install" $CIV_WORK_DIR
+./scripts/setup_audio_host.sh
+
+#Thermal setup
+systemctl stop thermald.service
+cp ./scripts/intel-thermal-conf.xml /etc/thermald
+cp ./scripts/thermald.service  /lib/systemd/system
+systemctl daemon-reload
+systemctl start thermald.service
+
+#9p_module setup
+modprobe 9pnet
+modprobe 9pnet_virtio
+modprobe 9p
+mkdir ./share_folder
+
+#Flash the file system
+tar -xvf caas-releasefiles-userdebug.tar.gz
+./scripts/start_flash_usb.sh caas-flashfiles-QMm000000.zip --display-off
+
+#Start up system
+./scripts/start_android_qcow2.sh
+
