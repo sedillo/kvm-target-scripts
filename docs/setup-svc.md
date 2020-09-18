@@ -80,7 +80,7 @@ wget https://github.com/projectceladon/celadon-binary/raw/master/CIV_00.20.02.24
 #Script setup
 chmod +x scripts/*.sh
 mkdir sof_audio
-mv -t sof_audio $CIV_WORK_DIR/scripts/sof_audio/configure_sof.sh $CIV_WORK_DIR/scripts/sof_audio/blacklist-dsp.conf
+mv -t sof_audio ./scripts/sof_audio/configure_sof.sh ./scripts/sof_audio/blacklist-dsp.conf
 chmod +x scripts/guest_pm_control
 chmod +x scripts/findall.py
 chmod +x scripts/thermsys
