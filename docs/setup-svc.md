@@ -87,7 +87,7 @@ chmod +x scripts/thermsys
 chmod +x scripts/batsys
 
 #Audio setup
-./sof_audio/configure_sof.sh "install" $CIV_WORK_DIR
+./sof_audio/configure_sof.sh "install" .
 ./scripts/setup_audio_host.sh
 
 #Thermal setup
