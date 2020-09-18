@@ -72,6 +72,8 @@ $ sudo systemctl start qemu@ubuntu.service
 #Create CIV folder
 mkdir /var/vm/civ
 cd /var/vm/civ
+a=`grep -rn CIV_WORK_DIR /etc/environment`
+CIV_WORK_DIR=$(pwd)
 
 #Download precompiled binaries
 wget https://github.com/projectceladon/celadon-binary/raw/master/CIV_00.20.02.24_A10/caas-ota-QMm000000.zip
