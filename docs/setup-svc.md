@@ -73,29 +73,34 @@ $ sudo systemctl start qemu@ubuntu.service
 mkdir /var/vm/civ
 cd /var/vm/civ
 a=`grep -rn CIV_WORK_DIR /etc/environment`
-CIV_WORK_DIR=$(pwd)
+CIV_WORK_DIR=/var/vm/civ
+sed -i "s|export CIV_WORK_DIR.*||g" /etc/environment
+
 
 #Download precompiled binaries
 wget https://github.com/projectceladon/celadon-binary/raw/master/CIV_00.20.02.24_A10/caas-ota-QMm000000.zip
 wget https://github.com/projectceladon/celadon-binary/raw/master/CIV_00.20.02.24_A10/caas-releasefiles-userdebug.tar.gz
 
 #Script setup
-chmod +x scripts/*.sh
-mkdir sof_audio
-mv -t sof_audio ./scripts/sof_audio/configure_sof.sh ./scripts/sof_audio/blacklist-dsp.conf
-chmod +x scripts/guest_pm_control
-chmod +x scripts/findall.py
-chmod +x scripts/thermsys
-chmod +x scripts/batsys
+apt install -y wget mtools ovmf dmidecode python3-usb python3-pyudev pulseaudio jq
+apt install -y uuid-dev nasm acpidump iasl
+apt install -y git libfdt-dev libpixman-1-dev libssl-dev vim socat libsdl2-dev libspice-server-dev autoconf libtool xtightvncviewer tightvncserver x11vnc uuid-runtime uuid uml-utilities bridge-utils python-dev liblzma-dev libc6-dev libegl1-mesa-dev libepoxy-dev libdrm-dev libgbm-dev libaio-dev libusb-1.0.0-dev libgtk-3-dev bison libcap-dev libattr1-dev flex
 
-#Audio setup
-./sof_audio/configure_sof.sh "install" .
-./scripts/setup_audio_host.sh
+
+
+tar -xvf caas-releasefiles-userdebug.tar.gz
+chmod +x $CIV_WORK_DIR/scripts/*.sh
+mkdir $CIV_WORK_DIR/sof_audio
+mv -t $CIV_WORK_DIR/sof_audio $CIV_WORK_DIR/scripts/sof_audio/configure_sof.sh $CIV_WORK_DIR/scripts/sof_audio/blacklist-dsp.conf
+chmod +x $CIV_WORK_DIR/scripts/guest_pm_control
+chmod +x $CIV_WORK_DIR/scripts/findall.py
+chmod +x $CIV_WORK_DIR/scripts/thermsys
+chmod +x $CIV_WORK_DIR/scripts/batsys
 
 #Thermal setup
 systemctl stop thermald.service
-cp ./scripts/intel-thermal-conf.xml /etc/thermald
-cp ./scripts/thermald.service  /lib/systemd/system
+cp $CIV_WORK_DIR/scripts/intel-thermal-conf.xml /etc/thermald
+cp $CIV_WORK_DIR/scripts/thermald.service  /lib/systemd/system
 systemctl daemon-reload
 systemctl start thermald.service
 
@@ -103,7 +108,11 @@ systemctl start thermald.service
 modprobe 9pnet
 modprobe 9pnet_virtio
 modprobe 9p
-mkdir ./share_folder
+mkdir $CIV_WORK_DIR/share_folder
+
+$CIV_WORK_DIR/sof_audio/configure_sof.sh "install" $CIV_WORK_DIR
+$CIV_WORK_DIR/scripts/setup_audio_host.sh
+
 
 #Flash the file system
 tar -xvf caas-releasefiles-userdebug.tar.gz
