@@ -113,9 +113,7 @@ mkdir $CIV_WORK_DIR/share_folder
 $CIV_WORK_DIR/sof_audio/configure_sof.sh "install" $CIV_WORK_DIR
 $CIV_WORK_DIR/scripts/setup_audio_host.sh
 
-
 #Flash the file system
-tar -xvf caas-releasefiles-userdebug.tar.gz
 ./scripts/start_flash_usb.sh caas-flashfiles-QMm000000.zip --display-off
 
 #Start up system
